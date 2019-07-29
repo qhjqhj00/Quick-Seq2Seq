@@ -1,4 +1,4 @@
-# Partly modified from zalandoresearch
+# Partly modified from zalandoresearch's flair
 
 from typing import Dict
 
@@ -16,10 +16,6 @@ import re
 
 
 class Dictionary:
-    """
-    字典类
-    """
-
     def __init__(self, add_unk=True):
         self.item2idx: Dict[str, int] = {}
         self.idx2item: List[str] = []
@@ -27,7 +23,6 @@ class Dictionary:
             self.add_item('<unk>')
 
     def add_item(self, item: str) -> int:
-        """增加字典项"""
         item = item.encode('utf-8')
         if item not in self.item2idx:
             self.idx2item.append(item)
@@ -35,7 +30,6 @@ class Dictionary:
         return self.item2idx[item]
 
     def get_idx_for_item(self, item: str) -> int:
-        """获得字典项的序号"""
         item = item.encode('utf-8')
         if item in self.item2idx.keys():
             return self.item2idx[item]
@@ -43,7 +37,6 @@ class Dictionary:
             return 0
 
     def get_items(self) -> List[str]:
-        """获得字典项的列表"""
         items = []
         for item in self.idx2item:
             items.append(item.decode('UTF-8'))
@@ -53,7 +46,6 @@ class Dictionary:
         return len(self.idx2item)
 
     def get_item_for_index(self, idx):
-        """得到字典项的序号"""
         return self.idx2item[idx].decode('UTF-8')
 
     def save(self, savefile):
@@ -77,19 +69,11 @@ class Dictionary:
             dictionary.idx2item = idx2item
         return dictionary
 
-class Token:
-    """
-    标签类
-    目前针对中文，英文，维吾尔语做了区别处理。
-    其中，参数lang控制不同的语言
-    lang = 'UY' 维吾尔语生成 Token.latin 拉丁字母
-    lang = 'PY' 中文生成 Token.pinyin 拼音
-    """
 
+class Token:
     def __init__(self,
                  text: str,
                  idx: int = None,
-                 head_id: int = None,
                  whitespace_after: bool = True,
                  start_position: int = None,
                  sp: str = None
@@ -106,13 +90,11 @@ class Token:
         self.end_pos = start_position + len(text) if start_position is not None else None
 
     def converter(self):
-        """将汉字变为拼音"""
         p = pinyin(self.text, style=Style.TONE2)
         p = [t[0] for t in p]
         return ' '.join(p)
 
     def uyghur_to_latin(self):
-        """将维语转化为拉丁文形式"""
         latin_map = {"ا": "a", "ە": "e", "ى": "i", "ې": "é", "و": "o",
                      "ۇ": "u", "ۆ": "ö", "ۈ": "ü", "ب": "b", "پ": "p", "ت": "t", "ژ": "j",
                      "چ": "ç", "خ": "x", "د": "d", "ر": "r", "ز": "z", "ج": "j", "س": "s",
@@ -130,12 +112,10 @@ class Token:
 
     @property
     def start_position(self) -> int:
-        """起始位置"""
         return self.start_pos
 
     @property
     def end_position(self) -> int:
-        """结束位置"""
         return self.end_pos
 
     def __str__(self) -> str:
@@ -177,7 +157,6 @@ class Sentence:
                 return token
 
     def add_token(self, token: Token):
-        """增加token"""
         self.tokens.append(token)
 
         token.sentence = self
@@ -185,7 +164,6 @@ class Sentence:
             token.idx = len(self.tokens)
 
     def to_tokenized_string(self, lang: str = None) -> str:
-        """返回分词后的文本"""
         if lang == 'ug':
             return ' '.join([t.latin for t in self.tokens])
         elif lang == 'py':
@@ -194,7 +172,6 @@ class Sentence:
             return ' '.join([t.text for t in self.tokens])
 
     def to_plain_string(self, lang: str = None):
-        """返回正常文本"""
         plain = ''
         for token in self.tokens:
             if lang == 'ug':
@@ -208,7 +185,6 @@ class Sentence:
         return plain.rstrip()
 
     def infer_space_after(self):
-        """判断token后是否有空格"""
         last_token = None
         quote_count: int = 0
 
@@ -235,7 +211,6 @@ class Sentence:
         return self
 
     def to_original_text(self) -> str:
-        """生成原来的文本"""
         str = ''
         pos = 0
         for t in self.tokens:
@@ -263,6 +238,7 @@ class Sentence:
     def __len__(self) -> int:
         return len(self.tokens)
 
+
 class SentenceSrc:
     def __init__(self, src: Sentence, trg: Sentence = None):
         self.src = src
@@ -277,6 +253,7 @@ class SentenceSrc:
             token = Token('<sos>')
             self.trg.add_token(token)
 
+
 class Seq2seqCorpus:
     def __init__(self,
                  train: List[SentenceSrc],
@@ -288,16 +265,13 @@ class Seq2seqCorpus:
 
     @property
     def train(self) -> List[SentenceSrc]:
-        """训练集"""
         return self._train
 
     @property
     def test(self) -> List[SentenceSrc]:
-        """测试集"""
         return self._test
 
     def _get_most_common_tokens(self, sentence_type, max_tokens, min_freq) -> List[str]:
-        """获得高频词"""
         tokens_and_frequencies = Counter(self._get_all_tokens(sentence_type))
         tokens_and_frequencies = tokens_and_frequencies.most_common()
 
@@ -309,7 +283,6 @@ class Seq2seqCorpus:
         return tokens
 
     def make_vocab_dictionary(self, sentence_type, max_tokens=-1, min_freq=1) -> Dictionary:
-        """生成词汇表"""
         tokens = self._get_most_common_tokens(sentence_type, max_tokens, min_freq)
 
         vocab_dictionary: Dictionary = Dictionary(add_unk=False)
@@ -327,6 +300,7 @@ class Seq2seqCorpus:
             raise ValueError
         tokens = [token for sublist in tokens for token in sublist]
         return list(map((lambda t: t.text), tokens))
+
 
 class Tokenizer:
     def __init__(self, language_type: str = None, example: str = None, sp_op: str = None):
@@ -416,7 +390,6 @@ class Tokenizer:
 
     @staticmethod
     def uy_preprocess(text):
-        """维吾尔语预处理"""
         text = re.sub('،', ' ، ', text)
         text = re.sub(r'\.', ' . ', text)
         text = re.sub('!', ' ! ', text)

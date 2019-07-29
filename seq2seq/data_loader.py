@@ -26,11 +26,6 @@ def load_seq2seq_data(train_file, test_file = None):
 
 
 def __sample(total_number_of_sentences: int, percentage: float = 0.1) -> List[int]:
-    """
-    :param total_number_of_sentences: 数据集的大小
-    :param percentage: 提取比例
-    :return: sample的indices
-    """
     sample_size: int = round(total_number_of_sentences * percentage)
     sample = random.sample(range(1, total_number_of_sentences), sample_size)
     return sample
