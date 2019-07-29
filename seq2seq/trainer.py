@@ -5,9 +5,8 @@ import random
 import logging
 from torch.optim.adam import Adam
 import torch
-import lensnlp.models.nn as nn
-from lensnlp.utils.data import Sentence, Corpus, Seq2seqCorpus
-from lensnlp.utils.training_utils import Metric, clear_embeddings, log_line, init_log, WeightExtractor
+from seq2seq.data import Sentence, Seq2seqCorpus, SentenceSrc
+from seq2seq.utils import log_line, init_log
 
 from torch.optim import Optimizer
 
