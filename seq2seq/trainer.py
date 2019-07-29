@@ -37,21 +37,15 @@ class Seq2SeqTrainer:
               learning_rate: float = 0.001,
               mini_batch_size: int = 32,
               eval_mini_batch_size: int = 20,
-              max_epochs: int = 150,
+              max_epochs: int = 100,
               test_mode: bool = False,
               **kwargs
               ):
-
-        if eval_mini_batch_size is None:
-            eval_mini_batch_size = mini_batch_size
 
         if type(base_path) is str:
             base_path = Path(base_path)
 
         init_log(log, base_path)
-
-        log_line(log)
-        # log.info(f'Evaluation method: Mircro F1-Score')
 
         optimizer = self.optimizer(self.model.parameters(), **kwargs)
 

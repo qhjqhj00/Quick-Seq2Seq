@@ -5,7 +5,6 @@ from pathlib import Path
 import torch
 from seq2seq.data import Dictionary, Sentence, Token, SentenceSrc
 from seq2seq import device
-import os
 
 import random
 
@@ -76,12 +75,12 @@ class Seq2Seq(torch.nn.Module):
 
         super(Seq2Seq, self).__init__()
 
-        self.src_dict = src_dict.item2idx
-        self.trg_dict = trg_dict.item2idx
+        self.src_dict = src_dict
+        self.trg_dict = trg_dict
 
         self.trg_vocab = trg_dict.idx2item
 
-        self.PAD_IDX = self.src_dict['_PAD_'.encode('utf-8')]
+        self.PAD_IDX = self.src_dict.item2idx['_PAD_'.encode('utf-8')]
 
         self.encoder = encoder
         self.decoder = decoder
@@ -149,19 +148,16 @@ class Seq2Seq(torch.nn.Module):
             sentences = [SentenceSrc]
 
         trg = [sent.trg for sent in sentences]
-        trg_idx_tensor = self.sentences_to_idx(trg, self.trg_dict)
+        trg_idx_tensor = self.sentences_to_idx(trg, self.trg_dict.item2idx)
 
         src = [sent.src for sent in sentences]
-        src_idx_tensor = self.sentences_to_idx(src, self.src_dict)
+        src_idx_tensor = self.sentences_to_idx(src, self.src_dict.item2idx)
 
         outputs = self.forward(src_idx_tensor, trg_idx_tensor)
         loss = self.loss_function(outputs, torch.einsum('ij->ji', trg_idx_tensor[1:, :]))
         return loss
 
     def save(self, model_file: Union[str, Path]):
-        """
-        存模型
-        """
         model_state = {
             'state_dict': self.state_dict(),
             'src_dict': self.src_dict,
@@ -173,20 +169,15 @@ class Seq2Seq(torch.nn.Module):
         torch.save(model_state, str(model_file), pickle_protocol=4)
 
     def predict(self, sentences: Union[List[SentenceSrc], SentenceSrc], mini_batch_size: int = 32):
-        """
-        预测
-        输入为 Sentence 数量不限
-        返回 Sentence，标签存入对应的位置
-        mini_batch_size为每个batch预测的数量
-        """
+
         if isinstance(sentences, SentenceSrc):
             sentences = [sentences]
 
         trg = [sent.trg for sent in sentences]
-        trg_idx_tensor = self.sentences_to_idx(trg, self.trg_dict)
+        trg_idx_tensor = self.sentences_to_idx(trg, self.trg_dict.item2idx)
 
         src = [sent.src for sent in sentences]
-        src_idx_tensor = self.sentences_to_idx(src, self.src_dict)
+        src_idx_tensor = self.sentences_to_idx(src, self.src_dict.item2idx)
 
         with torch.no_grad():
             batches = [sentences[x:x + mini_batch_size] for x in range(0, len(sentences), mini_batch_size)]
@@ -208,10 +199,7 @@ class Seq2Seq(torch.nn.Module):
 
     @classmethod
     def load_from_file(cls, model_file: Union[str, Path]):
-        """
-        :param model_file: 模型地址
-        :return: 加载好的模型
-        """
+
         state = Seq2Seq._load_state(model_file)
 
         model = Seq2Seq(
