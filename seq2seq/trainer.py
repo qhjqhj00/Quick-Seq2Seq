@@ -7,10 +7,7 @@ from torch.optim.adam import Adam
 import torch
 import lensnlp.models.nn as nn
 from lensnlp.utils.data import Sentence, Corpus, Seq2seqCorpus
-from lensnlp.models import RelationExtraction
 from lensnlp.utils.training_utils import Metric, clear_embeddings, log_line, init_log, WeightExtractor
-
-from lensnlp.hyper_parameters import Parameter
 
 from torch.optim import Optimizer
 
