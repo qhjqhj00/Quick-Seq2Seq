@@ -140,13 +140,16 @@ class Sentence:
             self.Tokenizer = tokenizer
         elif self.language_type is not None:
             self.Tokenizer = Tokenizer(self.language_type, self.sp_op)
-        else:
+        elif text is not None:
             self.Tokenizer = Tokenizer(example=text)
+        else:
+            self.Tokenizer = None
 
-        tokenized = self.Tokenizer.word_tokenizer(text)
+        if self.Tokenizer is not None:
+            tokenized = self.Tokenizer.word_tokenizer(text)
 
-        for token in tokenized:
-            self.add_token(token)
+            for token in tokenized:
+                self.add_token(token)
 
         if max_length is not None:
             self.tokens = self.tokens[:max_length]

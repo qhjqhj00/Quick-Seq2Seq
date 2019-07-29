@@ -187,7 +187,7 @@ class Seq2Seq(torch.nn.Module):
                 for i, sent in enumerate(batch):
                     for idx in predicted_seq[i]:
                         if idx != self.PAD_IDX:
-                            sent.trg.add_token(Token(self.trg_vocab[idx]))
+                            sent.trg.add_token(Token(self.trg_vocab[idx].decode('utf-8')))
         return sentences
 
     @staticmethod
