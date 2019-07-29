@@ -53,8 +53,6 @@ class Seq2SeqTrainer:
         log_line(log)
         # log.info(f'Evaluation method: Mircro F1-Score')
 
-        weight_extractor = WeightExtractor(base_path)
-
         optimizer = self.optimizer(self.model.parameters(), **kwargs)
 
         if self.optimizer_state is not None:
@@ -99,7 +97,6 @@ class Seq2SeqTrainer:
                         log.info(f'epoch {epoch + 1} - iter {batch_no}/{len(batches)} - loss '
                                  f'{train_loss / seen_sentences:.8f}')
                         iteration = epoch * len(batches) + batch_no
-                        weight_extractor.extract_weights(self.model.state_dict(), iteration)
 
                 train_loss /= len(train_data)
 
