@@ -17,6 +17,7 @@ def init_log(log, output_file):
     log.addHandler(fh)
     log.setLevel(level=logging.INFO)
 
+
 def init_output_file(base_path: Path, file_name: str) -> Path:
     """
     在本地生成一个文件

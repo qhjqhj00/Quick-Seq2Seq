@@ -1,11 +1,9 @@
-# some
+# Partly modified from zalandoresearch
 
 from typing import List, Dict, Union
 
-import torch
 from pypinyin import pinyin, Style
 from collections import Counter
-from collections import defaultdict
 
 from typing import List
 import langid
@@ -15,6 +13,7 @@ from segtok.segmenter import split_single
 from segtok.tokenizer import split_contractions
 from segtok.tokenizer import word_tokenizer
 import re
+
 
 class Dictionary:
     """
@@ -144,7 +143,6 @@ class Token:
 
     def __repr__(self) -> str:
         return 'Token: {} {}'.format(self.idx, self.text) if self.idx is not None else 'Token: {}'.format(self.text)
-
 
 
 class Sentence:

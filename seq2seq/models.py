@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 
 import torch
-from lensnlp.utils.data import Dictionary, Sentence, Label, Token, SentenceSrc, Seq2seqCorpus
+from seq2seq.data import Dictionary, Sentence, Token, SentenceSrc, Seq2seqCorpus
 from lensnlp.hyper_parameters import Parameter, device
 import os
 

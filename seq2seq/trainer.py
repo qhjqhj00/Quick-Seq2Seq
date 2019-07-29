@@ -5,7 +5,7 @@ import random
 import logging
 from torch.optim.adam import Adam
 import torch
-from seq2seq.data import Sentence, Seq2seqCorpus, SentenceSrc
+from seq2seq.data import Seq2seqCorpus
 from seq2seq.utils import log_line, init_log
 
 from torch.optim import Optimizer
