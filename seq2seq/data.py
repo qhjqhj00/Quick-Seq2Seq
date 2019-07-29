@@ -1,6 +1,6 @@
 # Partly modified from zalandoresearch
 
-from typing import List, Dict, Union
+from typing import Dict
 
 from pypinyin import pinyin, Style
 from collections import Counter

@@ -13,8 +13,6 @@ from typing import List, Union
 
 log = logging.getLogger('Seq2Seq')
 
-CACHE_ROOT = os.path.expanduser(os.path.join('~', '.lensnlp'))
-
 
 class Encoder(torch.nn.Module):
     def __init__(self, input_dim, emb_dim, hid_dim, n_layers, dropout):
@@ -128,13 +126,10 @@ class Seq2Seq(torch.nn.Module):
 
         trg_vocab_size = self.decoder.output_dim
 
-        # tensor to store decoder outputs
         outputs = torch.zeros(max_len, batch_size, trg_vocab_size).to(device)
 
-        # last hidden state of the encoder is used as the initial hidden state of the decoder
         hidden, cell = self.encoder(src_idx_tensor)
 
-        # first input to the decoder is the <sos> tokens
         trg_input = trg_idx_tensor[0, :]
 
         for t in range(1, max_len):
