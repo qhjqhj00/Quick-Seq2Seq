@@ -11,7 +11,7 @@ from seq2seq.utils import log_line, init_log
 from torch.optim import Optimizer
 
 
-log = logging.getLogger('Seq2Seq')
+log = logging.getLogger('seq2seq')
 
 
 class Seq2SeqTrainer:
@@ -36,7 +36,6 @@ class Seq2SeqTrainer:
               base_path: Union[Path, str],
               learning_rate: float = 0.001,
               mini_batch_size: int = 32,
-              eval_mini_batch_size: int = 20,
               max_epochs: int = 100,
               test_mode: bool = False,
               **kwargs

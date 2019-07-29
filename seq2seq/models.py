@@ -10,7 +10,7 @@ import random
 
 from typing import List, Union
 
-log = logging.getLogger('Seq2Seq')
+log = logging.getLogger('seq2seq')
 
 
 class Encoder(torch.nn.Module):
