@@ -11,7 +11,7 @@ import random
 
 from typing import List, Union
 
-log = logging.getLogger('lensnlp')
+log = logging.getLogger('Seq2Seq')
 
 CACHE_ROOT = os.path.expanduser(os.path.join('~', '.lensnlp'))
 

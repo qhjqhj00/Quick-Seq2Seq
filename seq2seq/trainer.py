@@ -11,7 +11,7 @@ from seq2seq.utils import log_line, init_log
 from torch.optim import Optimizer
 
 
-log = logging.getLogger('lensnlp')
+log = logging.getLogger('Seq2Seq')
 
 
 class Seq2SeqTrainer:
