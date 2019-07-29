@@ -184,7 +184,6 @@ class Sentence:
         if token.idx is None:
             token.idx = len(self.tokens)
 
-
     def to_tokenized_string(self, lang: str = None) -> str:
         """返回分词后的文本"""
         if lang == 'ug':

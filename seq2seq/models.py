@@ -3,8 +3,8 @@ import logging
 from pathlib import Path
 
 import torch
-from seq2seq.data import Dictionary, Sentence, Token, SentenceSrc, Seq2seqCorpus
-from lensnlp.hyper_parameters import Parameter, device
+from seq2seq.data import Dictionary, Sentence, Token, SentenceSrc
+from seq2seq import device
 import os
 
 import random
@@ -33,19 +33,9 @@ class Encoder(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, src):
-        # src = [src sent len, batch size]
 
         embedded = self.dropout(self.embedding(src))
-
-        # embedded = [src sent len, batch size, emb dim]
-
         outputs, (hidden, cell) = self.rnn(embedded)
-
-        # outputs = [src sent len, batch size, hid dim * n directions]
-        # hidden = [n layers * n directions, batch size, hid dim]
-        # cell = [n layers * n directions, batch size, hid dim]
-
-        # outputs are always from the top hidden layer
 
         return hidden, cell
 
@@ -69,37 +59,11 @@ class Decoder(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, input, hidden, cell):
-        # input = [batch size]
-        # hidden = [n layers * n directions, batch size, hid dim]
-        # cell = [n layers * n directions, batch size, hid dim]
-
-        # n directions in the decoder will both always be 1, therefore:
-        # hidden = [n layers, batch size, hid dim]
-        # context = [n layers, batch size, hid dim]
 
         input = input.unsqueeze(0)
-
-        # input = [1, batch size]
-
         embedded = self.dropout(self.embedding(input))
-
-        # embedded = [1, batch size, emb dim]
-
         output, (hidden, cell) = self.rnn(embedded, (hidden, cell))
-
-        # output = [sent len, batch size, hid dim * n directions]
-        # hidden = [n layers * n directions, batch size, hid dim]
-        # cell = [n layers * n directions, batch size, hid dim]
-
-        # sent len and n directions will always be 1 in the decoder, therefore:
-        # output = [1, batch size, hid dim]
-        # hidden = [n layers, batch size, hid dim]
-        # cell = [n layers, batch size, hid dim]
-
         prediction = self.out(output.squeeze(0))
-
-        # prediction = [batch size, output dim]
-
         return prediction, hidden, cell
 
 
@@ -223,10 +187,16 @@ class Seq2Seq(torch.nn.Module):
         if isinstance(sentences, SentenceSrc):
             sentences = [sentences]
 
+        trg = [sent.trg for sent in sentences]
+        trg_idx_tensor = self.sentences_to_idx(trg, self.trg_dict)
+
+        src = [sent.src for sent in sentences]
+        src_idx_tensor = self.sentences_to_idx(src, self.src_dict)
+
         with torch.no_grad():
             batches = [sentences[x:x + mini_batch_size] for x in range(0, len(sentences), mini_batch_size)]
             for batch in batches:
-                outputs = self.forward(batch, teacher_forcing_ratio=0)
+                outputs = self.forward(src_idx_tensor, trg_idx_tensor, teacher_forcing_ratio=0)
                 predicted_seq = torch.argmax(outputs, dim=1)
                 for i, sent in enumerate(batch):
                     for idx in predicted_seq[i]:
@@ -272,11 +242,7 @@ class Seq2Seq(torch.nn.Module):
 
     @staticmethod
     def load(model_file: str):
-        if model_file == 'seq2seq':
-            classifier: Seq2Seq = Seq2Seq.load_from_file(Path(CACHE_ROOT) / 'seq2seq/best-mdoel.pt')
-        else:
-            try:
-                classifier: Seq2Seq = Seq2Seq.load_from_file(Path(CACHE_ROOT) / model_file)
-            except NameError('specify a model!'):
-                raise
-        return classifier
+
+        model: Seq2Seq = Seq2Seq.load_from_file(model_file)
+
+        return model

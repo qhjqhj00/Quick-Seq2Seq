@@ -42,7 +42,7 @@ source sentence k-1\t target sentence k-1\n
 source sentence k\t target sentence k\n
 ```
 
-sample.txt is a sample for data format.
+./data/sample.txt is a sample for data format.
 
 Currently, tokenizer of the library supports Chinese, English, Uyghur, which can be automatically switched.  
 
