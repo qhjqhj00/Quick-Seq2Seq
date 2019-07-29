@@ -1,4 +1,4 @@
-# some 
+# some
 
 from typing import List, Dict, Union
 

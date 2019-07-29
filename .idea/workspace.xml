@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="811a2fe8-e16d-4eff-9faf-fca2446957bf" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/seq2seq/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq2seq/trainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq2seq/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq2seq/utils.py" afterDir="false" />
-    </list>
+    <list default="true" id="811a2fe8-e16d-4eff-9faf-fca2446957bf" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,13 +27,13 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/seq2seq/data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="628">
-              <caret line="281" column="19" selection-start-line="281" selection-start-column="6" selection-end-line="281" selection-end-column="19" />
+            <state relative-caret-position="285">
+              <caret line="19" column="7" lean-forward="true" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
               <folding>
-                <element signature="e#0#30#0" expanded="true" />
+                <element signature="e#0#36#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -63,14 +60,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/seq2seq/trainer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="21" lean-forward="true" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="21" />
-              <folding>
-                <element signature="e#0#24#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="120">
+              <caret line="8" column="44" lean-forward="true" selection-start-line="8" selection-start-column="44" selection-end-line="8" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -110,11 +104,11 @@
         <option value="$PROJECT_DIR$/seq2seq/modules.py" />
         <option value="$PROJECT_DIR$/seq2seq/__init__.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/seq2seq/data.py" />
         <option value="$PROJECT_DIR$/seq2seq/data_loader.py" />
         <option value="$PROJECT_DIR$/seq2seq/models.py" />
         <option value="$PROJECT_DIR$/seq2seq/utils.py" />
         <option value="$PROJECT_DIR$/seq2seq/trainer.py" />
+        <option value="$PROJECT_DIR$/seq2seq/data.py" />
       </list>
     </option>
   </component>
@@ -177,12 +171,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1564366730340</updated>
-      <workItem from="1564366732337" duration="3945000" />
+      <workItem from="1564366732337" duration="4091000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3945000" />
+    <option name="totallyTimeSpent" value="4091000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1920" y="0" width="1920" height="1080" extended-state="0" />
@@ -260,22 +254,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/seq2seq/data.py">
+    <entry file="file://$PROJECT_DIR$/seq2seq/trainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="628">
-          <caret line="281" column="19" selection-start-line="281" selection-start-column="6" selection-end-line="281" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="120">
+          <caret line="8" column="44" lean-forward="true" selection-start-line="8" selection-start-column="44" selection-end-line="8" selection-end-column="44" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/seq2seq/trainer.py">
+    <entry file="file://$PROJECT_DIR$/seq2seq/data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
-          <caret line="19" column="21" lean-forward="true" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="21" />
+          <caret line="19" column="7" lean-forward="true" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
           <folding>
-            <element signature="e#0#24#0" expanded="true" />
+            <element signature="e#0#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
