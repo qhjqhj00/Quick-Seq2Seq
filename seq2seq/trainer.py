@@ -52,6 +52,7 @@ class Seq2SeqTrainer:
             optimizer.load_state_dict(self.optimizer_state)
 
         train_data = self.corpus.train
+        test_data = self.corpus.test
 
         try:
 
@@ -94,9 +95,11 @@ class Seq2SeqTrainer:
                 train_loss /= len(train_data)
 
                 self.model.eval()
+                eval_loss = self.evaluate(test_data)
 
                 log_line(log)
-                log.info(f'EPOCH {epoch + 1} done: loss {train_loss:.4f} - lr {learning_rate:.4f}')
+                log.info(f'EPOCH {epoch + 1} done: loss {train_loss:.4f}'
+                         f' - test_loss {eval_loss:.4f} - lr {learning_rate:.4f}')
 
             self.model.save(base_path / 'final-model.pt')
 
@@ -106,5 +109,16 @@ class Seq2SeqTrainer:
             log.info('Saving model ...')
             self.model.save(base_path / 'final-model.pt')
             log.info('Done.')
+
+    def evaluate(self, test_data, eval_batch_size: int = 32):
+        eval_loss = 0
+        batches = [test_data[x:x + eval_batch_size] for x in range(0, len(test_data), eval_batch_size)]
+        with torch.no_grad():
+            for i, batch in enumerate(batches):
+
+                loss = self.model.forward_loss(batch)  # turn off teacher forcing
+
+                eval_loss += loss.item()
+        return eval_loss
 
 
