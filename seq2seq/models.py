@@ -14,7 +14,7 @@ log = logging.getLogger('seq2seq')
 
 
 class Encoder(torch.nn.Module):
-    def __init__(self, input_dim, emb_dim, hid_dim, n_layers, dropout):
+    def __init__(self, input_dim, emb_dim, hid_dim, n_layers, dropout, rnn_type):
         super().__init__()
 
         self.input_dim = input_dim
@@ -38,7 +38,7 @@ class Encoder(torch.nn.Module):
 
 
 class Decoder(torch.nn.Module):
-    def __init__(self, output_dim, emb_dim, hid_dim, n_layers, dropout):
+    def __init__(self, output_dim, emb_dim, hid_dim, n_layers, dropout, rnn_type):
         super().__init__()
 
         self.emb_dim = emb_dim
@@ -49,7 +49,18 @@ class Decoder(torch.nn.Module):
 
         self.embedding = torch.nn.Embedding(output_dim, emb_dim)
 
-        self.rnn = torch.nn.LSTM(emb_dim, hid_dim, n_layers, dropout=dropout)
+        if rnn_type in ['LSTM', 'GRU']:
+
+            if self.nlayers == 1:
+                self.rnn = getattr(torch.nn, self.rnn_type)(self.emb_dim, self.hid_dim,
+                                                            num_layers=self.n_layers,
+                                                            dropout=dropout,
+                                                            bidirectional=True)
+            else:
+                self.rnn = getattr(torch.nn, self.rnn_type)(self.emb_dim, self.hid_dim,
+                                                            num_layers=self.n_layers,
+                                                            dropout=dropout,
+                                                            bidirectional=True)
 
         self.out = torch.nn.Linear(hid_dim, output_dim)
 
