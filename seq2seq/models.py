@@ -14,7 +14,8 @@ log = logging.getLogger('seq2seq')
 
 
 class Encoder(torch.nn.Module):
-    def __init__(self, input_dim, emb_dim, hid_dim, n_layers, dropout, rnn_type):
+    def __init__(self, input_dim, emb_dim, hid_dim, n_layers, dropout,
+                 rnn_type: str = "LSTM", bidirectional: bool = False):
         super().__init__()
 
         self.input_dim = input_dim
@@ -25,7 +26,11 @@ class Encoder(torch.nn.Module):
 
         self.embedding = torch.nn.Embedding(input_dim, emb_dim)
 
-        self.rnn = torch.nn.LSTM(emb_dim, hid_dim, n_layers, dropout=dropout)
+        if rnn_type in ['LSTM', 'GRU', 'RNN']:
+            self.rnn = getattr(torch.nn, rnn_type)(self.emb_dim, self.hid_dim,
+                                                        num_layers=self.n_layers,
+                                                        dropout=dropout,
+                                                        bidirectional=bidirectional)
 
         self.dropout = torch.nn.Dropout(dropout)
 
@@ -38,7 +43,8 @@ class Encoder(torch.nn.Module):
 
 
 class Decoder(torch.nn.Module):
-    def __init__(self, output_dim, emb_dim, hid_dim, n_layers, dropout, rnn_type):
+    def __init__(self, output_dim, emb_dim, hid_dim, n_layers, dropout,
+                 rnn_type: str = "LSTM", bidirectional: bool = False):
         super().__init__()
 
         self.emb_dim = emb_dim
@@ -46,30 +52,24 @@ class Decoder(torch.nn.Module):
         self.output_dim = output_dim
         self.n_layers = n_layers
         self.dropout = dropout
+        self.bidirectional = bidirectional
 
         self.embedding = torch.nn.Embedding(output_dim, emb_dim)
 
-        if rnn_type in ['LSTM', 'GRU']:
-
-            if self.nlayers == 1:
-                self.rnn = getattr(torch.nn, self.rnn_type)(self.emb_dim, self.hid_dim,
-                                                            num_layers=self.n_layers,
-                                                            dropout=dropout,
-                                                            bidirectional=True)
-            else:
-                self.rnn = getattr(torch.nn, self.rnn_type)(self.emb_dim, self.hid_dim,
-                                                            num_layers=self.n_layers,
-                                                            dropout=dropout,
-                                                            bidirectional=True)
+        if rnn_type in ['LSTM', 'GRU', 'RNN']:
+            self.rnn = getattr(torch.nn, rnn_type)(self.emb_dim, self.hid_dim,
+                                                        num_layers=self.n_layers,
+                                                        dropout=dropout,
+                                                        bidirectional=bidirectional)
 
         self.out = torch.nn.Linear(hid_dim, output_dim)
 
         self.dropout = torch.nn.Dropout(dropout)
 
-    def forward(self, input, hidden, cell):
+    def forward(self, input_tensor, hidden, cell):
 
-        input = input.unsqueeze(0)
-        embedded = self.dropout(self.embedding(input))
+        input_tensor = input_tensor.unsqueeze(0)
+        embedded = self.dropout(self.embedding(input_tensor))
         output, (hidden, cell) = self.rnn(embedded, (hidden, cell))
         prediction = self.out(output.squeeze(0))
         return prediction, hidden, cell
