@@ -44,7 +44,7 @@ class Encoder(torch.nn.Module):
 
 class Decoder(torch.nn.Module):
     def __init__(self, output_dim, emb_dim, hid_dim, n_layers, dropout,
-                 rnn_type: str = "LSTM", bidirectional: bool = False):
+                 rnn_type: str = "LSTM", bidirectional: bool = False, use_attention: bool = False):
         super().__init__()
 
         self.emb_dim = emb_dim
@@ -53,6 +53,7 @@ class Decoder(torch.nn.Module):
         self.n_layers = n_layers
         self.dropout = dropout
         self.bidirectional = bidirectional
+        self.use_attention = use_attention
 
         self.embedding = torch.nn.Embedding(output_dim, emb_dim)
 
