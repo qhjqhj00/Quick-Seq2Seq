@@ -6,9 +6,18 @@ import random
 def read_seq2seq_data(path):
     data = []
     lines = [line.strip().split('\t') for line in open(path, encoding="utf-8")]
+    src_tokenizer = None
+    trg_tokenizer = None
     for line in lines:
-        src_sentence = Sentence(line[0])
-        trg_sentence = Sentence(line[-1])
+        if src_tokenizer is None and trg_tokenizer is None:
+            src_sentence = Sentence(line[0])
+            src_tokenizer = src_sentence.Tokenizer
+            trg_sentence = Sentence(line[-1])
+            trg_tokenizer = trg_sentence.Tokenizer
+        else:
+            src_sentence = Sentence(line[0], tokenizer=src_tokenizer)
+            trg_sentence = Sentence(line[-1], tokenizer=trg_tokenizer)
+
         sentence = SentenceSrc(src_sentence, trg_sentence)
         data.append(sentence)
     return data
