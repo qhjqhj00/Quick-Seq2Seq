@@ -5,6 +5,7 @@ from pathlib import Path
 import torch
 from seq2seq.data import Dictionary, Sentence, Token, SentenceSrc
 from seq2seq import device
+from seq2seq.modules import Attention
 
 import random
 
@@ -55,6 +56,9 @@ class Decoder(torch.nn.Module):
         self.bidirectional = bidirectional
         self.use_attention = use_attention
 
+        if self.use_attention:
+            self.attention = Attention(self.hid_dim)
+
         self.embedding = torch.nn.Embedding(output_dim, emb_dim)
 
         if rnn_type in ['LSTM', 'GRU', 'RNN']:
@@ -72,6 +76,8 @@ class Decoder(torch.nn.Module):
         input_tensor = input_tensor.unsqueeze(0)
         embedded = self.dropout(self.embedding(input_tensor))
         output, (hidden, cell) = self.rnn(embedded, (hidden, cell))
+        if self.use_attention:
+            output, _ = self.attention(output)
         prediction = self.out(output.squeeze(0))
         return prediction, hidden, cell
 
