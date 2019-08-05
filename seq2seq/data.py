@@ -355,7 +355,7 @@ class Tokenizer:
                 token = Token(word, start_position=index - len(word), sp=self.sp_op)
                 tokenized.append(token)
 
-        elif self.language_type == 'en':
+        else:
             tokenized = []
             tokens = []
             sentences = split_single(text)
