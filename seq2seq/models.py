@@ -137,6 +137,8 @@ class Seq2Seq(torch.nn.Module):
 
         batch_size = trg_idx_tensor.shape[1]
 
+        #TODO adjust max length 
+
         trg_vocab_size = self.decoder.output_dim
 
         outputs = torch.zeros(self.max_len, batch_size, trg_vocab_size).to(device)
