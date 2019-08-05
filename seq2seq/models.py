@@ -99,12 +99,12 @@ class Seq2Seq(torch.nn.Module):
         self.trg_vocab = trg_dict.idx2item
 
         self.PAD_IDX = self.src_dict.item2idx['_PAD_'.encode('utf-8')]
+        self.END_IDX = self.src_dict.item2idx['<eos>'.encode('utf-8')]
 
         self.encoder = encoder
         self.decoder = decoder
         self.loss_function = torch.nn.CrossEntropyLoss(ignore_index=self.PAD_IDX)
 
-        self.start_embed = '<sos>'
         self.max_len = 50
 
         assert self.encoder.hid_dim == self.decoder.hid_dim, \
@@ -182,10 +182,12 @@ class Seq2Seq(torch.nn.Module):
 
         torch.save(model_state, str(model_file), pickle_protocol=4)
 
-    def predict(self, sentences: Union[List[SentenceSrc], SentenceSrc], mini_batch_size: int = 32):
+    def predict(self, sentences: Union[List[SentenceSrc], SentenceSrc, str], mini_batch_size: int = 32):
 
         if isinstance(sentences, SentenceSrc):
             sentences = [sentences]
+        if isinstance(sentences, str):
+            sentences = [SentenceSrc(Sentence(sentences))]
 
         trg = [sent.trg for sent in sentences]
         trg_idx_tensor = self.sentences_to_idx(trg, self.trg_dict.item2idx)
@@ -199,9 +201,11 @@ class Seq2Seq(torch.nn.Module):
                 outputs = self.forward(src_idx_tensor, trg_idx_tensor, teacher_forcing_ratio=0)
                 predicted_seq = torch.argmax(outputs, dim=1)
                 for i, sent in enumerate(batch):
-                    for idx in predicted_seq[i]:
-                        if idx != self.PAD_IDX:
+                    for idx in predicted_seq[i][1:]:
+                        if idx != self.END_IDX:
                             sent.trg.add_token(Token(self.trg_vocab[idx].decode('utf-8')))
+                        else:
+                            break
         return sentences
 
     @staticmethod
