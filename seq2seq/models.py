@@ -105,6 +105,7 @@ class Seq2Seq(torch.nn.Module):
         self.loss_function = torch.nn.CrossEntropyLoss(ignore_index=self.PAD_IDX)
 
         self.start_embed = '<sos>'
+        self.max_len = 50
 
         assert self.encoder.hid_dim == self.decoder.hid_dim, \
             "Hidden dimensions of encoder and decoder must be equal!"
@@ -136,20 +137,15 @@ class Seq2Seq(torch.nn.Module):
 
         batch_size = trg_idx_tensor.shape[1]
 
-        if trg_idx_tensor.shape[1] != 1:
-            max_len = trg_idx_tensor.shape[0]
-        else:
-            max_len = src_idx_tensor.shape[0] + 5
-
         trg_vocab_size = self.decoder.output_dim
 
-        outputs = torch.zeros(max_len, batch_size, trg_vocab_size).to(device)
+        outputs = torch.zeros(self.max_len, batch_size, trg_vocab_size).to(device)
 
         hidden, cell = self.encoder(src_idx_tensor)
 
         trg_input = trg_idx_tensor[0, :]
 
-        for t in range(1, max_len):
+        for t in range(1, self.max_len):
 
             output, hidden, cell = self.decoder(trg_input, hidden, cell)
             outputs[t] = output
