@@ -1,6 +1,7 @@
 from seq2seq.data import SentenceSrc, Sentence, Seq2seqCorpus
 from typing import List
 import random
+from tqdm import tqdm
 
 
 def read_seq2seq_data(path):
@@ -8,7 +9,7 @@ def read_seq2seq_data(path):
     lines = [line.strip().split('\t') for line in open(path, encoding="utf-8")]
     src_tokenizer = None
     trg_tokenizer = None
-    for line in lines:
+    for line in tqdm(lines, desc="Loading data"):
         if src_tokenizer is None and trg_tokenizer is None:
             src_sentence = Sentence(line[0])
             src_tokenizer = src_sentence.Tokenizer

@@ -3,7 +3,7 @@ import logging
 
 
 def log_line(log):
-    log.info('-' * 100)
+    log.info('-' * 80)
 
 
 def init_log(log, output_file):
