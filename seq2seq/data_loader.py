@@ -23,18 +23,14 @@ def read_seq2seq_data(path):
     return data
 
 
-def load_seq2seq_data(train_file, test_file = None):
+def load_seq2seq_data(train_file, test_rate: float = 0.2, test_file=None):
     train_ = read_seq2seq_data(train_file)
+    random.shuffle(train_)
     if test_file is not None:
         test_ = read_seq2seq_data(test_file)
     else:
-        test_: List[SentenceSrc] = [train_[i] for i in __sample(len(train_), 0.2)]
-        train_ = [sentence for sentence in train_ if sentence not in test_]
+        sample_amount = len(train_)
+        test_: List[SentenceSrc] = train_[:int(test_rate*sample_amount)]
+        train_ = train_[int(test_rate*sample_amount):]
     seq_corpus = Seq2seqCorpus(train_, test_)
     return seq_corpus
-
-
-def __sample(total_number_of_sentences: int, percentage: float = 0.1) -> List[int]:
-    sample_size: int = round(total_number_of_sentences * percentage)
-    sample = random.sample(range(1, total_number_of_sentences), sample_size)
-    return sample
