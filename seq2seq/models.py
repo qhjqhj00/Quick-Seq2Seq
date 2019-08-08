@@ -143,6 +143,9 @@ class Seq2Seq(torch.nn.Module):
             batch_max_len = self.max_len
             trg_idx_tensor = trg_idx_tensor[:batch_max_len]
 
+        elif batch_max_len == 1:
+            batch_max_len = self.max_len
+
         trg_vocab_size = self.decoder.output_dim
 
         outputs = torch.zeros(batch_max_len, batch_size, trg_vocab_size).to(device)
@@ -189,11 +192,12 @@ class Seq2Seq(torch.nn.Module):
         torch.save(model_state, str(model_file), pickle_protocol=4)
 
     def predict(self, sentences: Union[List[SentenceSrc], SentenceSrc, str], mini_batch_size: int = 32):
-
+        output_str = False
         if isinstance(sentences, SentenceSrc):
             sentences = [sentences]
         if isinstance(sentences, str):
             sentences = [SentenceSrc(Sentence(sentences))]
+            output_str = True
 
         trg = [sent.trg for sent in sentences]
         trg_idx_tensor = self.sentences_to_idx(trg, self.trg_dict.item2idx)
@@ -212,7 +216,11 @@ class Seq2Seq(torch.nn.Module):
                             sent.trg.add_token(Token(self.trg_vocab[idx].decode('utf-8')))
                         else:
                             break
-        return sentences
+        if not output_str:
+            return sentences
+        else:
+            outs = [sent.trg.to_plain_string() for sent in sentences]
+            return outs
 
     @staticmethod
     def _filter_empty_sentences(sentences: List[Sentence]) -> List[Sentence]:
