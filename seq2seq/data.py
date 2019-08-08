@@ -8,6 +8,8 @@ from collections import Counter
 from typing import List
 import langid
 
+from .utils import get_sample
+
 import jieba
 from segtok.segmenter import split_single
 from segtok.tokenizer import split_contractions
@@ -310,6 +312,17 @@ class Seq2seqCorpus:
         tokens = [token for sublist in tokens for token in sublist]
         return list(map((lambda t: t.text), tokens))
 
+    @staticmethod
+    def sample(rate: float, sentences: List[SentenceSrc]):
+        len_size = len(sentences)
+        sample_indices = get_sample(len_size, rate)
+        sample_data = [sentences[i] for i in sample_indices]
+        return sample_data
+
+    def sample_corpus(self, rate):
+        self._train = self.sample(len(self.train), rate)
+        self._test = self.sample(len(self.test), rate)
+
 
 class Tokenizer:
     def __init__(self, language_type: str = None, example: str = None, sp_op: str = None):
@@ -414,3 +427,5 @@ class Tokenizer:
         text = re.sub(r'( )*-( )*', '-', text)
 
         return text
+
+
