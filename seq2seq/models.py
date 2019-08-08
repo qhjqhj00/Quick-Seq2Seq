@@ -137,17 +137,21 @@ class Seq2Seq(torch.nn.Module):
 
         batch_size = trg_idx_tensor.shape[1]
 
-        #TODO adjust max length 
+        batch_max_len = trg_idx_tensor.shape[0]
+
+        if batch_max_len > self.max_len:
+            batch_max_len = self.max_len
+            trg_idx_tensor = trg_idx_tensor[:batch_max_len]
 
         trg_vocab_size = self.decoder.output_dim
 
-        outputs = torch.zeros(self.max_len, batch_size, trg_vocab_size).to(device)
+        outputs = torch.zeros(batch_max_len, batch_size, trg_vocab_size).to(device)
 
         hidden, cell = self.encoder(src_idx_tensor)
 
         trg_input = trg_idx_tensor[0, :]
 
-        for t in range(1, self.max_len):
+        for t in range(1, batch_max_len):
 
             output, hidden, cell = self.decoder(trg_input, hidden, cell)
             outputs[t] = output
@@ -157,7 +161,7 @@ class Seq2Seq(torch.nn.Module):
 
         outputs = torch.einsum('ijk->jki', outputs[1:])
 
-        return outputs
+        return outputs, trg_idx_tensor
 
     def forward_loss(self, sentences: Union[SentenceSrc, List[SentenceSrc]]):
         if isinstance(sentences, SentenceSrc):
@@ -169,8 +173,8 @@ class Seq2Seq(torch.nn.Module):
         src = [sent.src for sent in sentences]
         src_idx_tensor = self.sentences_to_idx(src, self.src_dict.item2idx)
 
-        outputs = self.forward(src_idx_tensor, trg_idx_tensor)
-        loss = self.loss_function(outputs, torch.einsum('ij->ji', trg_idx_tensor[1:, :]))
+        outputs, trg_idx_tensor = self.forward(src_idx_tensor, trg_idx_tensor)
+        loss = self.loss_function(outputs, torch.einsum('ij->ji', trg_idx_tensor[1:]))
         return loss
 
     def save(self, model_file: Union[str, Path]):
@@ -200,7 +204,7 @@ class Seq2Seq(torch.nn.Module):
         with torch.no_grad():
             batches = [sentences[x:x + mini_batch_size] for x in range(0, len(sentences), mini_batch_size)]
             for batch in batches:
-                outputs = self.forward(src_idx_tensor, trg_idx_tensor, teacher_forcing_ratio=0)
+                outputs, _ = self.forward(src_idx_tensor, trg_idx_tensor, teacher_forcing_ratio=0)
                 predicted_seq = torch.argmax(outputs, dim=1)
                 for i, sent in enumerate(batch):
                     for idx in predicted_seq[i][1:]:

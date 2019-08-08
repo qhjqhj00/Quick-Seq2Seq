@@ -294,11 +294,17 @@ class Seq2seqCorpus:
             vocab_dictionary.add_item(token)
         return vocab_dictionary
 
+    def get_all_sentence(self) -> List[SentenceSrc]:
+        all_sentences: List[SentenceSrc] = []
+        all_sentences.extend(self.train)
+        all_sentences.extend(self.test)
+        return all_sentences
+
     def _get_all_tokens(self, sentence_type) -> List[str]:
         if sentence_type == 'src':
-            tokens = list(map((lambda s: s.src.tokens), self.train))
+            tokens = list(map((lambda s: s.src.tokens), self.get_all_sentence()))
         elif sentence_type == 'trg':
-            tokens = list(map((lambda s: s.trg.tokens), self.train))
+            tokens = list(map((lambda s: s.trg.tokens), self.get_all_sentence()))
         else:
             raise ValueError
         tokens = [token for sublist in tokens for token in sublist]
