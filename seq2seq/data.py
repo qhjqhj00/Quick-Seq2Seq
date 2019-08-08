@@ -313,15 +313,15 @@ class Seq2seqCorpus:
         return list(map((lambda t: t.text), tokens))
 
     @staticmethod
-    def sample(rate: float, sentences: List[SentenceSrc]):
+    def sample(sentences: List[SentenceSrc], rate: float):
         len_size = len(sentences)
         sample_indices = get_sample(len_size, rate)
         sample_data = [sentences[i] for i in sample_indices]
         return sample_data
 
     def sample_corpus(self, rate):
-        self._train = self.sample(len(self.train), rate)
-        self._test = self.sample(len(self.test), rate)
+        self._train = self.sample(self.train, rate)
+        self._test = self.sample(self.test, rate)
 
 
 class Tokenizer:
