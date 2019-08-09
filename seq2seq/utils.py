@@ -1,6 +1,8 @@
 from pathlib import Path
 import logging
 from typing import List
+import torch.nn as nn
+import copy
 
 
 def log_line(log):
@@ -36,3 +38,7 @@ def get_sample(total_number_of_sentences: int, percentage: float = 0.1) -> List[
     sample_size: int = round(total_number_of_sentences * percentage)
     sample = random.sample(range(1, total_number_of_sentences), sample_size)
     return sample
+
+def clones(module, N):
+    "Produce N identical layers."
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])

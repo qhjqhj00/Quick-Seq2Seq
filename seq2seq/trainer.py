@@ -90,7 +90,6 @@ class Seq2SeqTrainer:
                     if batch_no % modulo == 0:
                         log.info(f'epoch {epoch + 1} - iter {batch_no}/{len(batches)} - loss '
                                  f'{train_loss / seen_sentences:.8f}')
-                        iteration = epoch * len(batches) + batch_no
 
                 train_loss /= len(train_data)
 
@@ -116,7 +115,7 @@ class Seq2SeqTrainer:
         with torch.no_grad():
             for i, batch in enumerate(batches):
 
-                loss = self.model.forward_loss(batch)  # turn off teacher forcing
+                loss = self.model.forward_loss(batch, teacher_forcing_ratio=0)  # turn off teacher forcing
 
                 eval_loss += loss.item()
         return eval_loss

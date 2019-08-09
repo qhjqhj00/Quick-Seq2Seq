@@ -1,3 +1,6 @@
+# borrowed
+
+from .utils import clones
 import numpy as np
 import torch
 import torch.nn as nn
@@ -6,6 +9,7 @@ import math, copy, time
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
 import seaborn
+
 
 
 class EncoderDecoder(nn.Module):
@@ -42,10 +46,6 @@ class Generator(nn.Module):
 
     def forward(self, x):
         return F.log_softmax(self.proj(x), dim=-1)
-
-def clones(module, N):
-    "Produce N identical layers."
-    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
 
 
 class Encoder(nn.Module):

@@ -166,7 +166,7 @@ class Seq2Seq(torch.nn.Module):
 
         return outputs, trg_idx_tensor
 
-    def forward_loss(self, sentences: Union[SentenceSrc, List[SentenceSrc]]):
+    def forward_loss(self, sentences: Union[SentenceSrc, List[SentenceSrc]], teacher_forcing_ratio=0.5):
         if isinstance(sentences, SentenceSrc):
             sentences = [SentenceSrc]
 
@@ -176,7 +176,7 @@ class Seq2Seq(torch.nn.Module):
         src = [sent.src for sent in sentences]
         src_idx_tensor = self.sentences_to_idx(src, self.src_dict.item2idx)
 
-        outputs, trg_idx_tensor = self.forward(src_idx_tensor, trg_idx_tensor)
+        outputs, trg_idx_tensor = self.forward(src_idx_tensor, trg_idx_tensor, teacher_forcing_ratio)
         loss = self.loss_function(outputs, torch.einsum('ij->ji', trg_idx_tensor[1:]))
         return loss
 
