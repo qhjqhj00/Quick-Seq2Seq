@@ -212,7 +212,7 @@ class Seq2Seq(torch.nn.Module):
                 predicted_seq = torch.argmax(outputs, dim=1)
                 for i, sent in enumerate(batch):
                     for idx in predicted_seq[i][1:]:
-                        if idx != self.END_IDX:
+                        if idx.item() != self.END_IDX:
                             sent.trg.add_token(Token(self.trg_vocab[idx].decode('utf-8')))
                         else:
                             break

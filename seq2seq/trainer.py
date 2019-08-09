@@ -118,6 +118,6 @@ class Seq2SeqTrainer:
                 loss = self.model.forward_loss(batch, teacher_forcing_ratio=0)  # turn off teacher forcing
 
                 eval_loss += loss.item()
+        eval_loss /= len(test_data)
         return eval_loss
-
 
