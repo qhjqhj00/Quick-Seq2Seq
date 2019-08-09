@@ -1,4 +1,4 @@
-# borrowed
+# borrowed from http://nlp.seas.harvard.edu/2018/04/03/attention.html
 
 from .utils import clones
 import numpy as np
@@ -9,7 +9,6 @@ import math, copy, time
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
 import seaborn
-
 
 
 class EncoderDecoder(nn.Module):
